@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en" id="top">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KeepFresh — Food Shelf Life Tracker: How Long Food Lasts in Fridge & Freezer</title>
+<meta name="description" content="KeepFresh tracks how long food lasts in the fridge, freezer and pantry with a 170-food shelf-life chart. Add items with bought-on dates, get use-by dates, an Eat-First urgency queue, opened-vs-unopened toggle, fridge temperature checker and money-saved tracker.">
+<meta name="keywords" content="how long does food last in fridge, food shelf life chart, fridge food expiration guide, food expiry tracker, eat first queue">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root { --kf-bg:#f7f5ef; --kf-green:#16a34a; --kf-orange:#f97316; }
+  body { background:var(--kf-bg); }
+  .kf-card { background:#ffffff; border:1px solid #e9e4d6; border-radius:1.25rem; box-shadow:0 4px 18px rgba(22,163,74,.06); }
+  .kf-input { border:1.5px solid #dcd6c2; border-radius:.75rem; padding:.55rem .8rem; width:100%; background:#fffdf8; }
+  .kf-input:focus { outline:none; border-color:var(--kf-green); box-shadow:0 0 0 3px rgba(22,163,74,.15); }
+  .kf-btn-green { background:var(--kf-green); color:#fff; font-weight:700; border-radius:.9rem; padding:.65rem 1.4rem; transition:transform .08s; }
+  .kf-btn-green:hover { transform:translateY(-1px); background:#15803d; }
+  .kf-btn-orange { background:var(--kf-orange); color:#fff; font-weight:700; border-radius:.9rem; padding:.65rem 1.4rem; }
+  .kf-btn-orange:hover { background:#ea580c; }
+  .kf-badge { display:inline-flex; align-items:center; gap:.5rem; background:#ecfdf5; border:1.5px dashed var(--kf-green); color:#15803d; font-weight:700; border-radius:999px; padding:.4rem 1rem; }
+  .kf-pill { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; border-radius:999px; padding:.18rem .7rem; }
+  .pill-expired { background:#fee2e2; color:#b91c1c; }
+  .pill-today { background:#ffedd5; color:#c2410c; }
+  .pill-soon { background:#fef3c7; color:#b45309; }
+  .pill-fresh { background:#dcfce7; color:#15803d; }
+  .faq { background:#ffffff; border:1px solid #e9e4d6; border-radius:1rem; padding:1rem 1.25rem; margin-bottom:.75rem; }
+  .faq summary { font-weight:700; cursor:pointer; color:#14532d; }
+  .faq summary::-webkit-details-marker { color:var(--kf-orange); }
+  .kf-food-row:hover { background:#f0fdf4; }
+  .kf-article h2 { font-size:1.5rem; font-weight:800; color:#14532d; margin:2rem 0 .75rem; }
+  .kf-article h3 { font-size:1.15rem; font-weight:700; color:#166534; margin:1.4rem 0 .5rem; }
+  .kf-article p, .kf-article li { color:#3f3f38; line-height:1.75; }
+  .kf-article ul { list-style:disc; padding-left:1.5rem; margin:.6rem 0; }
+  .kf-article table { width:100%; border-collapse:collapse; margin:1rem 0; font-size:.92rem; }
+  .kf-article th, .kf-article td { border:1px solid #e0dcc8; padding:.55rem .7rem; text-align:left; }
+  .kf-article th { background:#ecfdf5; color:#14532d; }
+  @media print { .no-print { display:none !important; } }
+</style>
+</head>
+<body class="text-stone-800 antialiased">
+
+<!-- Sticky header -->
+<header class="no-print sticky top-0 z-40 bg-[#f7f5ef]/95 backdrop-blur border-b border-[#e9e4d6]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2 text-2xl font-black tracking-tight" style="color:#16a34a">
+      <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#16a34a] text-white text-xl">🥬</span>KeepFresh
+    </a>
+    <nav class="flex items-center gap-5 text-sm font-semibold">
+      <a href="#top" class="text-stone-700 hover:text-[#16a34a]">Home</a>
+      <a href="https://fixoraa.tech" class="text-stone-700 hover:text-[#16a34a]">More Tools</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-2 text-center">
+  <h1 class="text-3xl sm:text-5xl font-black text-[#14532d] tracking-tight">How long does your food <span style="color:#f97316">really</span> last?</h1>
+  <p class="mt-3 text-stone-600 max-w-2xl mx-auto">Track 170+ foods across fridge, freezer and pantry. Add items with their bought-on date, get exact use-by dates, and let the Eat-First queue tell you what to cook tonight.</p>
+  <div class="mt-4"><span class="kf-badge">🌱 Unlimited Free Usage — no signup, no paywall</span></div>
+</section>
+
+<!-- TOP AD -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOOL ============ -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid gap-6">
+
+  <!-- Add item -->
+  <section class="kf-card p-5 sm:p-7">
+    <h2 class="text-xl font-extrabold text-[#14532d] mb-1">🧺 Add a grocery item</h2>
+    <p class="text-sm text-stone-500 mb-4">Search the 170-food database, then enter when you bought it.</p>
+    <div class="grid md:grid-cols-2 gap-5">
+      <div>
+        <label class="text-sm font-bold text-stone-600" for="kf-food-search">Search food</label>
+        <input id="kf-food-search" class="kf-input mt-1" type="text" placeholder="e.g. chicken, milk, spinach…" autocomplete="off">
+        <div id="kf-food-list" class="mt-2 max-h-56 overflow-y-auto rounded-xl border border-[#e9e4d6] divide-y divide-[#f0ece0]"></div>
+        <div id="kf-selected-food" class="mt-2 text-sm font-bold text-[#15803d]"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 content-start">
+        <div>
+          <label class="text-sm font-bold text-stone-600" for="kf-bought-on">Bought on</label>
+          <input id="kf-bought-on" class="kf-input mt-1" type="date">
+        </div>
+        <div>
+          <label class="text-sm font-bold text-stone-600" for="kf-storage">Stored in</label>
+          <select id="kf-storage" class="kf-input mt-1">
+            <option value="fridge">🧊 Fridge</option>
+            <option value="freezer">❄️ Freezer</option>
+            <option value="pantry">🏠 Pantry</option>
+          </select>
+        </div>
+        <div class="col-span-2 flex items-center gap-3 bg-[#fff7ed] border border-[#fed7aa] rounded-xl px-3 py-2">
+          <input id="kf-opened" type="checkbox" class="w-5 h-5 accent-[#f97316]">
+          <label for="kf-opened" class="text-sm font-semibold text-stone-700">Already opened <span class="text-stone-400 font-normal">(uses the shorter opened shelf life)</span></label>
+        </div>
+        <div>
+          <label class="text-sm font-bold text-stone-600" for="kf-qty">Qty</label>
+          <input id="kf-qty" class="kf-input mt-1" type="number" min="1" value="1">
+        </div>
+        <div>
+          <label class="text-sm font-bold text-stone-600" for="kf-price">Price (optional)</label>
+          <input id="kf-price" class="kf-input mt-1" type="number" min="0" step="0.01" placeholder="e.g. 120">
+        </div>
+        <div class="col-span-2">
+          <button id="kf-add-btn" class="kf-btn-green w-full">＋ Add to my tracker</button>
+          <p id="kf-add-msg" class="text-sm mt-2 min-h-[1.25rem]"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid lg:grid-cols-5 gap-6">
+    <!-- My items -->
+    <section class="kf-card p-5 sm:p-6 lg:col-span-3">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-xl font-extrabold text-[#14532d]">🧊 My fridge</h2>
+        <button id="kf-clear-btn" class="text-xs font-bold text-stone-400 hover:text-red-600">clear all</button>
+      </div>
+      <div id="kf-items" class="space-y-2"></div>
+    </section>
+
+    <!-- Eat-first queue -->
+    <section class="kf-card p-5 sm:p-6 lg:col-span-2" style="border-top:4px solid #f97316">
+      <h2 class="text-xl font-extrabold text-[#14532d] mb-1">🔥 Eat-First queue</h2>
+      <p class="text-sm text-stone-500 mb-3">Most urgent items first — cook these tonight.</p>
+      <div id="kf-queue" class="space-y-2"></div>
+    </section>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Temp checker -->
+    <section class="kf-card p-5 sm:p-6">
+      <h2 class="text-xl font-extrabold text-[#14532d] mb-1">🌡️ Fridge & freezer temp checker</h2>
+      <p class="text-sm text-stone-500 mb-3">Is your appliance cold enough? Enter the reading.</p>
+      <div class="flex flex-wrap gap-2 items-end">
+        <div class="flex-1 min-w-[7rem]">
+          <label class="text-sm font-bold text-stone-600" for="kf-temp-value">Temperature</label>
+          <input id="kf-temp-value" class="kf-input mt-1" type="number" step="0.1" placeholder="e.g. 38">
+        </div>
+        <div>
+          <label class="text-sm font-bold text-stone-600" for="kf-temp-unit">Unit</label>
+          <select id="kf-temp-unit" class="kf-input mt-1"><option value="F">°F</option><option value="C">°C</option></select>
+        </div>
+        <div>
+          <label class="text-sm font-bold text-stone-600" for="kf-temp-zone">Zone</label>
+          <select id="kf-temp-zone" class="kf-input mt-1"><option value="fridge">Fridge</option><option value="freezer">Freezer</option></select>
+        </div>
+        <button id="kf-temp-check" class="kf-btn-orange">Check</button>
+      </div>
+      <div id="kf-temp-result" class="mt-3 text-sm font-semibold"></div>
+    </section>
+
+    <!-- Money saved -->
+    <section class="kf-card p-5 sm:p-6" style="border-top:4px solid #16a34a">
+      <h2 class="text-xl font-extrabold text-[#14532d] mb-1">💰 Money-saved tracker</h2>
+      <p class="text-sm text-stone-500 mb-3">Value of food you actually ate vs. what spoiled.</p>
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="rounded-xl bg-[#ecfdf5] border border-[#bbf7d0] p-3">
+          <div class="text-[11px] font-bold uppercase tracking-wide text-[#15803d]">Saved</div>
+          <div id="kf-saved-total" class="text-2xl font-black text-[#16a34a]">0</div>
+        </div>
+        <div class="rounded-xl bg-[#fef2f2] border border-[#fecaca] p-3">
+          <div class="text-[11px] font-bold uppercase tracking-wide text-red-700">Wasted</div>
+          <div id="kf-wasted-total" class="text-2xl font-black text-red-600">0</div>
+        </div>
+        <div class="rounded-xl bg-[#fff7ed] border border-[#fed7aa] p-3">
+          <div class="text-[11px] font-bold uppercase tracking-wide text-[#c2410c]">In fridge</div>
+          <div id="kf-active-total" class="text-2xl font-black text-[#f97316]">0</div>
+        </div>
+      </div>
+      <p class="text-xs text-stone-400 mt-3">Tip: add a price when you add items, then tap “Ate it” on items you finished.</p>
+    </section>
+  </div>
+
+  <p class="text-xs text-stone-400 text-center max-w-3xl mx-auto">Shelf-life values are estimates compiled from public USDA FoodKeeper guidance — always use your senses and, when in doubt, throw it out. Nothing here is medical or food-safety advice.</p>
+</main>
+
+<!-- BOTTOM AD -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LIB (injected at build time) ============ -->
+<script id="v3-keepfresh-food-shelf-life-tracker-lib">
+
+/* KeepFresh food shelf-life engine — PURE functions only.
+   No DOM, no window, no document, no localStorage, no navigator.
+   Durations compiled from USDA FoodKeeper public guidance at build time.
+   ALL VALUES ARE ESTIMATES, not safety guarantees. */
+
+var KF_DAY_MS = 86400000;
+
+/* ---------- tiny date helpers ---------- */
+function kfPad2(n) { return (n < 10 ? '0' : '') + n; }
+
+function kfParseISO(s) {
+  if (typeof s !== 'string') return null;
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.trim());
+  if (!m) return null;
+  var y = +m[1], mo = +m[2], d = +m[3];
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  var dt = new Date(y, mo - 1, d);
+  if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
+  return dt;
+}
+
+function kfFmtISO(dt) {
+  return dt.getFullYear() + '-' + kfPad2(dt.getMonth() + 1) + '-' + kfPad2(dt.getDate());
+}
+
+function kfAddDays(iso, days) {
+  var dt = kfParseISO(iso);
+  if (!dt || !isFinite(days)) return null;
+  return kfFmtISO(new Date(dt.getTime() + Math.round(days) * KF_DAY_MS));
+}
+
+function kfTodayISO() {
+  var n = new Date();
+  return kfFmtISO(n);
+}
+
+/* ---------- food database ----------
+   n: name, c: category, f: fridge days, z: freezer days,
+   p: pantry days (-1 = not applicable), o: opened fridge days (-1 = same as f),
+   a: search aliases. -1 in f/z/p means "do not store this way".
+   Values are conservative USDA FoodKeeper-style estimates. */
+var KF_FOODS = [
+{n:"Milk",c:"Dairy & Eggs",f:7,z:90,p:-1,o:7,a:"dairy milk cow"},
+{n:"Heavy Cream",c:"Dairy & Eggs",f:21,z:120,p:-1,o:7,a:"whipping double cream"},
+{n:"Butter",c:"Dairy & Eggs",f:90,z:180,p:14,o:90,a:"dairy"},
+{n:"Margarine",c:"Dairy & Eggs",f:120,z:180,p:-1,o:120,a:"spread"},
+{n:"Yogurt",c:"Dairy & Eggs",f:7,z:60,p:-1,o:5,a:"yoghurt curd"},
+{n:"Sour Cream",c:"Dairy & Eggs",f:14,z:30,p:-1,o:7,a:"dairy"},
+{n:"Cottage Cheese",c:"Dairy & Eggs",f:7,z:30,p:-1,o:5,a:"paneer soft cheese"},
+{n:"Cream Cheese",c:"Dairy & Eggs",f:14,z:60,p:-1,o:10,a:"philadelphia"},
+{n:"Cheddar Cheese",c:"Dairy & Eggs",f:180,z:180,p:-1,o:120,a:"hard cheese block"},
+{n:"Parmesan Cheese",c:"Dairy & Eggs",f:180,z:180,p:-1,o:180,a:"hard cheese parmigiano"},
+{n:"Mozzarella (fresh)",c:"Dairy & Eggs",f:7,z:60,p:-1,o:4,a:"soft cheese pizza"},
+{n:"Brie / Camembert",c:"Dairy & Eggs",f:14,z:180,p:-1,o:7,a:"soft cheese"},
+{n:"Feta Cheese",c:"Dairy & Eggs",f:21,z:180,p:-1,o:14,a:"greek cheese"},
+{n:"Ricotta Cheese",c:"Dairy & Eggs",f:7,z:60,p:-1,o:5,a:"soft cheese"},
+{n:"Eggs (raw, in shell)",c:"Dairy & Eggs",f:28,z:-1,p:-1,o:-1,a:"anda egg"},
+{n:"Egg Whites (raw)",c:"Dairy & Eggs",f:4,z:365,p:-1,o:-1,a:"anda egg white"},
+{n:"Egg Yolks (raw)",c:"Dairy & Eggs",f:4,z:120,p:-1,o:-1,a:"anda egg yolk"},
+{n:"Hard-Boiled Eggs",c:"Dairy & Eggs",f:7,z:-1,p:-1,o:-1,a:"boiled anda egg"},
+{n:"Buttermilk",c:"Dairy & Eggs",f:14,z:90,p:-1,o:7,a:"chaas dairy"},
+{n:"Kefir",c:"Dairy & Eggs",f:10,z:60,p:-1,o:7,a:"fermented milk"},
+{n:"Whipped Cream (aerosol)",c:"Dairy & Eggs",f:14,z:-1,p:-1,o:14,a:"spray cream"},
+{n:"Evaporated Milk (opened)",c:"Dairy & Eggs",f:4,z:-1,p:-1,o:4,a:"canned milk"},
+{n:"Sweetened Condensed Milk (opened)",c:"Dairy & Eggs",f:14,z:-1,p:365,o:14,a:"canned milk"},
+{n:"Ground Beef",c:"Meat",f:2,z:120,p:-1,o:-1,a:"mince keema red meat"},
+{n:"Beef Steak (raw)",c:"Meat",f:4,z:365,p:-1,o:-1,a:"red meat"},
+{n:"Beef Roast (raw)",c:"Meat",f:4,z:365,p:-1,o:-1,a:"red meat joint"},
+{n:"Chicken (whole, raw)",c:"Poultry",f:2,z:365,p:-1,o:-1,a:"murgi poultry"},
+{n:"Chicken Pieces (raw)",c:"Poultry",f:2,z:270,p:-1,o:-1,a:"breast thigh drumstick murgi"},
+{n:"Ground Chicken / Turkey",c:"Poultry",f:2,z:120,p:-1,o:-1,a:"mince keema"},
+{n:"Turkey (whole, raw)",c:"Poultry",f:2,z:365,p:-1,o:-1,a:"poultry bird"},
+{n:"Pork Chops (raw)",c:"Meat",f:4,z:180,p:-1,o:-1,a:"suar"},
+{n:"Pork Roast (raw)",c:"Meat",f:4,z:180,p:-1,o:-1,a:"suar"},
+{n:"Ground Pork",c:"Meat",f:2,z:120,p:-1,o:-1,a:"mince keema"},
+{n:"Lamb Chops (raw)",c:"Meat",f:4,z:270,p:-1,o:-1,a:"mutton red meat"},
+{n:"Bacon (raw)",c:"Meat",f:7,z:90,p:-1,o:7,a:"pork strips"},
+{n:"Ham (whole, unopened)",c:"Meat",f:21,z:180,p:-1,o:5,a:"pork"},
+{n:"Ham (sliced deli)",c:"Deli",f:5,z:60,p:-1,o:5,a:"cold cuts pork"},
+{n:"Hot Dogs (unopened)",c:"Deli",f:14,z:60,p:-1,o:7,a:"frankfurter sausage"},
+{n:"Sausage (raw)",c:"Meat",f:2,z:90,p:-1,o:-1,a:"links"},
+{n:"Sausage (smoked / cooked)",c:"Deli",f:7,z:60,p:-1,o:7,a:"kielbasa"},
+{n:"Pepperoni / Salami (dry)",c:"Deli",f:180,z:-1,p:60,o:-1,a:"cured meat"},
+{n:"Corned Beef (raw)",c:"Meat",f:6,z:90,p:-1,o:-1,a:"brined beef"},
+{n:"Veal (raw)",c:"Meat",f:4,z:270,p:-1,o:-1,a:"calf meat"},
+{n:"Duck (raw)",c:"Poultry",f:2,z:180,p:-1,o:-1,a:"poultry bird"},
+{n:"Rabbit (raw)",c:"Meat",f:2,z:180,p:-1,o:-1,a:"game meat"},
+{n:"Venison (raw)",c:"Meat",f:4,z:365,p:-1,o:-1,a:"deer game meat"},
+{n:"Organ Meats (liver)",c:"Meat",f:2,z:120,p:-1,o:-1,a:"kaleji offal"},
+{n:"Cooked Beef / Chicken / Pork",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"roast meat dinner"},
+{n:"Cooked Ground Meat",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"mince keema cooked"},
+{n:"Leftover Casserole",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"bake dish"},
+{n:"Leftover Pizza",c:"Leftovers",f:4,z:60,p:-1,o:-1,a:"slice"},
+{n:"Leftover Pasta",c:"Leftovers",f:4,z:60,p:-1,o:-1,a:"noodles spaghetti"},
+{n:"Leftover Rice",c:"Leftovers",f:4,z:90,p:-1,o:-1,a:"chawal cooked grain"},
+{n:"Leftover Soup / Stew",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"curry broth"},
+{n:"Leftover Fish (cooked)",c:"Leftovers",f:3,z:90,p:-1,o:-1,a:"machli"},
+{n:"Rotisserie Chicken",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"roast chicken cooked"},
+{n:"Fried Chicken",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"crispy cooked"},
+{n:"Chicken Nuggets (cooked)",c:"Leftovers",f:4,z:90,p:-1,o:-1,a:"tenders"},
+{n:"Meatballs (cooked)",c:"Leftovers",f:4,z:120,p:-1,o:-1,a:"kofta"},
+{n:"Lean Fish (cod, tilapia - raw)",c:"Seafood",f:2,z:240,p:-1,o:-1,a:"white fish machli"},
+{n:"Fatty Fish (salmon, tuna - raw)",c:"Seafood",f:2,z:90,p:-1,o:-1,a:"oily fish machli"},
+{n:"Shrimp (raw)",c:"Seafood",f:2,z:180,p:-1,o:-1,a:"prawn jhinga"},
+{n:"Scallops (raw)",c:"Seafood",f:2,z:120,p:-1,o:-1,a:"shellfish"},
+{n:"Crab (raw)",c:"Seafood",f:2,z:90,p:-1,o:-1,a:"kekda shellfish"},
+{n:"Lobster (raw)",c:"Seafood",f:2,z:180,p:-1,o:-1,a:"shellfish"},
+{n:"Mussels / Clams (raw)",c:"Seafood",f:2,z:90,p:-1,o:-1,a:"shellfish"},
+{n:"Oysters (raw, in shell)",c:"Seafood",f:7,z:90,p:-1,o:-1,a:"shellfish"},
+{n:"Smoked Fish",c:"Seafood",f:14,z:60,p:-1,o:7,a:"lox"},
+{n:"Canned Tuna (unopened)",c:"Pantry",f:-1,z:-1,p:1095,o:4,a:"tin fish"},
+{n:"Canned Salmon (unopened)",c:"Pantry",f:-1,z:-1,p:1095,o:4,a:"tin fish"},
+{n:"Sushi (fresh)",c:"Seafood",f:1,z:-1,p:-1,o:-1,a:"raw fish japanese"},
+{n:"Cooked Shrimp",c:"Leftovers",f:3,z:90,p:-1,o:-1,a:"prawn jhinga cooked"},
+{n:"Apples",c:"Fruit",f:42,z:-1,p:7,o:-1,a:"seb"},
+{n:"Bananas",c:"Fruit",f:7,z:-1,p:5,o:-1,a:"kela"},
+{n:"Oranges",c:"Fruit",f:21,z:-1,p:10,o:-1,a:"santra citrus"},
+{n:"Lemons",c:"Fruit",f:30,z:-1,p:7,o:-1,a:"nimbu citrus"},
+{n:"Limes",c:"Fruit",f:21,z:-1,p:7,o:-1,a:"nimbu citrus"},
+{n:"Grapes",c:"Fruit",f:7,z:90,p:-1,o:-1,a:"angoor"},
+{n:"Strawberries",c:"Fruit",f:3,z:180,p:-1,o:-1,a:"berry"},
+{n:"Blueberries",c:"Fruit",f:10,z:300,p:-1,o:-1,a:"berry"},
+{n:"Raspberries",c:"Fruit",f:3,z:300,p:-1,o:-1,a:"berry"},
+{n:"Blackberries",c:"Fruit",f:3,z:300,p:-1,o:-1,a:"berry"},
+{n:"Cherries",c:"Fruit",f:7,z:300,p:-1,o:-1,a:"berry"},
+{n:"Peaches",c:"Fruit",f:5,z:-1,p:3,o:-1,a:"aadu stone fruit"},
+{n:"Pears",c:"Fruit",f:5,z:-1,p:4,o:-1,a:"nashpati"},
+{n:"Plums",c:"Fruit",f:5,z:-1,p:3,o:-1,a:"aloo bukhara stone fruit"},
+{n:"Watermelon (whole)",c:"Fruit",f:14,z:-1,p:7,o:4,a:"tarbooj melon"},
+{n:"Watermelon (cut)",c:"Fruit",f:4,z:-1,p:-1,o:-1,a:"tarbooj melon sliced"},
+{n:"Pineapple (whole)",c:"Fruit",f:7,z:-1,p:3,o:5,a:"ananas"},
+{n:"Pineapple (cut)",c:"Fruit",f:5,z:-1,p:-1,o:-1,a:"ananas sliced"},
+{n:"Mango",c:"Fruit",f:5,z:-1,p:3,o:-1,a:"aam"},
+{n:"Kiwi",c:"Fruit",f:10,z:-1,p:5,o:-1,a:"fruit"},
+{n:"Avocado",c:"Fruit",f:4,z:-1,p:4,o:-1,a:"makhan phal"},
+{n:"Cantaloupe (whole)",c:"Fruit",f:14,z:-1,p:-1,o:4,a:"kharbooja melon"},
+{n:"Cantaloupe (cut)",c:"Fruit",f:4,z:-1,p:-1,o:-1,a:"kharbooja melon sliced"},
+{n:"Cranberries",c:"Fruit",f:30,z:365,p:-1,o:-1,a:"berry"},
+{n:"Grapefruit",c:"Fruit",f:21,z:-1,p:10,o:-1,a:"citrus chakotra"},
+{n:"Apricots",c:"Fruit",f:5,z:-1,p:3,o:-1,a:"khubani stone fruit"},
+{n:"Lettuce / Salad Greens",c:"Vegetables",f:7,z:-1,p:-1,o:-1,a:"salad patta"},
+{n:"Spinach",c:"Vegetables",f:5,z:300,p:-1,o:-1,a:"palak leafy"},
+{n:"Kale",c:"Vegetables",f:7,z:300,p:-1,o:-1,a:"leafy green"},
+{n:"Broccoli",c:"Vegetables",f:5,z:300,p:-1,o:-1,a:"gobhi green"},
+{n:"Cauliflower",c:"Vegetables",f:7,z:300,p:-1,o:-1,a:"phool gobhi"},
+{n:"Carrots",c:"Vegetables",f:28,z:300,p:-1,o:-1,a:"gajar"},
+{n:"Celery",c:"Vegetables",f:14,z:300,p:-1,o:-1,a:"stalk"},
+{n:"Cucumbers",c:"Vegetables",f:7,z:-1,p:-1,o:-1,a:"kheera"},
+{n:"Tomatoes",c:"Vegetables",f:7,z:-1,p:5,o:-1,a:"tamatar"},
+{n:"Bell Peppers",c:"Vegetables",f:7,z:240,p:-1,o:-1,a:"shimla mirch capsicum"},
+{n:"Green Beans",c:"Vegetables",f:5,z:300,p:-1,o:-1,a:"phali"},
+{n:"Asparagus",c:"Vegetables",f:4,z:300,p:-1,o:-1,a:"spear"},
+{n:"Zucchini",c:"Vegetables",f:7,z:240,p:-1,o:-1,a:"courgette squash"},
+{n:"Eggplant",c:"Vegetables",f:5,z:-1,p:-1,o:-1,a:"baingan brinjal"},
+{n:"Mushrooms",c:"Vegetables",f:5,z:-1,p:-1,o:-1,a:"khumb fungus"},
+{n:"Onions (whole)",c:"Vegetables",f:-1,z:-1,p:30,o:-1,a:"pyaz"},
+{n:"Garlic",c:"Vegetables",f:-1,z:-1,p:60,o:-1,a:"lahsun"},
+{n:"Potatoes",c:"Vegetables",f:-1,z:-1,p:30,o:-1,a:"aloo"},
+{n:"Sweet Potatoes",c:"Vegetables",f:-1,z:-1,p:30,o:-1,a:"shakarkand"},
+{n:"Corn (fresh)",c:"Vegetables",f:3,z:300,p:-1,o:-1,a:"bhutta makka"},
+{n:"Peas (fresh)",c:"Vegetables",f:5,z:300,p:-1,o:-1,a:"matar"},
+{n:"Brussels Sprouts",c:"Vegetables",f:5,z:-1,p:-1,o:-1,a:"mini cabbage"},
+{n:"Cabbage",c:"Vegetables",f:21,z:300,p:-1,o:-1,a:"patta gobhi"},
+{n:"Beets",c:"Vegetables",f:21,z:300,p:-1,o:-1,a:"chukandar"},
+{n:"Fresh Herbs (parsley, cilantro)",c:"Vegetables",f:7,z:-1,p:-1,o:-1,a:"dhania coriander"},
+{n:"Basil",c:"Vegetables",f:5,z:-1,p:-1,o:-1,a:"tulsi herb"},
+{n:"Ginger (fresh)",c:"Vegetables",f:28,z:90,p:-1,o:-1,a:"adrak"},
+{n:"Radishes",c:"Vegetables",f:14,z:-1,p:-1,o:-1,a:"mooli"},
+{n:"Ketchup (opened)",c:"Condiments",f:180,z:-1,p:-1,o:180,a:"tomato sauce"},
+{n:"Mustard (opened)",c:"Condiments",f:365,z:-1,p:-1,o:365,a:"rai sauce"},
+{n:"Mayonnaise (opened)",c:"Condiments",f:60,z:-1,p:-1,o:60,a:"mayo"},
+{n:"BBQ Sauce (opened)",c:"Condiments",f:120,z:-1,p:-1,o:120,a:"barbecue"},
+{n:"Soy Sauce (opened)",c:"Condiments",f:730,z:-1,p:730,o:730,a:"soya"},
+{n:"Hot Sauce (opened)",c:"Condiments",f:180,z:-1,p:-1,o:180,a:"chili sauce"},
+{n:"Salsa (opened)",c:"Condiments",f:30,z:-1,p:-1,o:30,a:"dip"},
+{n:"Pasta Sauce (opened)",c:"Condiments",f:5,z:90,p:-1,o:5,a:"marinara"},
+{n:"Peanut Butter (opened)",c:"Condiments",f:-1,z:-1,p:90,o:90,a:"moongfali spread"},
+{n:"Jam / Jelly (opened)",c:"Condiments",f:365,z:-1,p:-1,o:365,a:"preserve murabba"},
+{n:"Honey",c:"Condiments",f:-1,z:-1,p:9999,o:-1,a:"shahad"},
+{n:"Maple Syrup (opened)",c:"Condiments",f:365,z:-1,p:-1,o:365,a:"pancake syrup"},
+{n:"Salad Dressing (opened)",c:"Condiments",f:90,z:-1,p:-1,o:90,a:"vinaigrette"},
+{n:"Pickles (opened)",c:"Condiments",f:365,z:-1,p:-1,o:365,a:"achar"},
+{n:"Olives (opened)",c:"Condiments",f:365,z:-1,p:-1,o:365,a:"zaitun"},
+{n:"Vinegar",c:"Condiments",f:-1,z:-1,p:1825,o:-1,a:"sirka"},
+{n:"Cooking Oil",c:"Condiments",f:-1,z:-1,p:180,o:180,a:"tel vegetable oil"},
+{n:"Worcestershire Sauce (opened)",c:"Condiments",f:365,z:-1,p:-1,o:365,a:"sauce"},
+{n:"White Bread",c:"Bakery & Grains",f:-1,z:90,p:7,o:-1,a:"loaf sandwich"},
+{n:"Whole Wheat Bread",c:"Bakery & Grains",f:-1,z:90,p:5,o:-1,a:"atta loaf"},
+{n:"Bagels",c:"Bakery & Grains",f:-1,z:90,p:7,o:-1,a:"bun"},
+{n:"Tortillas",c:"Bakery & Grains",f:30,z:-1,p:7,o:-1,a:"roti wrap chapati"},
+{n:"Croissants",c:"Bakery & Grains",f:-1,z:-1,p:3,o:-1,a:"pastry"},
+{n:"Muffins",c:"Bakery & Grains",f:-1,z:-1,p:4,o:-1,a:"cupcake"},
+{n:"Flour (white)",c:"Bakery & Grains",f:-1,z:-1,p:365,o:-1,a:"maida atta"},
+{n:"Sugar (white)",c:"Bakery & Grains",f:-1,z:-1,p:9999,o:-1,a:"cheeni"},
+{n:"Rice (dry)",c:"Bakery & Grains",f:-1,z:-1,p:730,o:-1,a:"chawal grain"},
+{n:"Pasta (dry)",c:"Bakery & Grains",f:-1,z:-1,p:730,o:-1,a:"noodles spaghetti"},
+{n:"Oats (dry)",c:"Bakery & Grains",f:-1,z:-1,p:730,o:-1,a:"daliya grain"},
+{n:"Cereal (opened)",c:"Bakery & Grains",f:-1,z:-1,p:90,o:90,a:"breakfast cornflakes"},
+{n:"Crackers (opened)",c:"Bakery & Grains",f:-1,z:-1,p:90,o:90,a:"biscuit"},
+{n:"Chips (opened)",c:"Bakery & Grains",f:-1,z:-1,p:14,o:14,a:"crisps namkeen"},
+{n:"Hummus (opened)",c:"Deli",f:7,z:-1,p:-1,o:7,a:"chickpea dip"},
+{n:"Guacamole",c:"Deli",f:3,z:-1,p:-1,o:-1,a:"avocado dip"},
+{n:"Tofu",c:"Deli",f:5,z:150,p:-1,o:5,a:"soy paneer"},
+{n:"Tempeh",c:"Deli",f:7,z:-1,p:-1,o:-1,a:"fermented soy"},
+{n:"Lunch Meat (deli sliced)",c:"Deli",f:5,z:60,p:-1,o:5,a:"cold cuts turkey"},
+{n:"Baby Food (opened)",c:"Deli",f:3,z:-1,p:-1,o:3,a:"infant puree"},
+{n:"Coffee (ground, opened)",c:"Pantry",f:-1,z:-1,p:180,o:180,a:"kaapi"},
+{n:"Tea (dry)",c:"Pantry",f:-1,z:-1,p:730,o:-1,a:"chai patti"},
+{n:"Nuts (shelled)",c:"Pantry",f:-1,z:365,p:120,o:-1,a:"badam dry fruit"},
+{n:"Chocolate",c:"Pantry",f:-1,z:-1,p:365,o:-1,a:"cocoa"}
+];
+
+/* ---------- pure logic ---------- */
+
+/* getFood(id) -> food object | null. id = index into KF_FOODS. */
+function kfGetFood(id) {
+  if (typeof id !== 'number' || !isFinite(id)) return null;
+  var i = Math.floor(id);
+  if (i < 0 || i >= KF_FOODS.length) return null;
+  return KF_FOODS[i];
+}
+
+/* searchFoods(q) -> array of {id, n, c}. Case-insensitive over name/category/aliases. */
+function kfSearchFoods(q) {
+  var query = String(q == null ? '' : q).trim().toLowerCase();
+  var out = [];
+  for (var i = 0; i < KF_FOODS.length; i++) {
+    var f = KF_FOODS[i];
+    if (!query) { out.push({ id: i, n: f.n, c: f.c }); continue; }
+    var hay = (f.n + ' ' + f.c + ' ' + (f.a || '')).toLowerCase();
+    if (hay.indexOf(query) !== -1) out.push({ id: i, n: f.n, c: f.c });
+  }
+  return out;
+}
+
+/* shelfDays(food, storage, opened) -> days | null.
+   storage: 'fridge' | 'freezer' | 'pantry'. opened toggles opened-vs-unopened life. */
+function kfShelfDays(food, storage, opened) {
+  if (!food || typeof food !== 'object') return null;
+  var st = String(storage || 'fridge').toLowerCase();
+  var base;
+  if (st === 'freezer') base = food.z;
+  else if (st === 'pantry') base = food.p;
+  else base = food.f;
+  if (typeof base !== 'number' || base < 0) return null;
+  if (opened && (st === 'fridge' || st === 'pantry') && typeof food.o === 'number' && food.o >= 0) {
+    return food.o;
+  }
+  return base;
+}
+
+/* calcUseBy(boughtOnISO, foodId, storage, opened) -> ISO date | null */
+function kfCalcUseBy(boughtOnISO, foodId, storage, opened) {
+  var dt = kfParseISO(boughtOnISO);
+  if (!dt) return null;
+  var today = kfParseISO(kfTodayISO());
+  if (dt.getTime() > today.getTime()) return null; /* bought-on cannot be in the future */
+  var food = kfGetFood(foodId);
+  var days = kfShelfDays(food, storage, opened);
+  if (days === null) return null;
+  return kfFmtISO(new Date(dt.getTime() + days * KF_DAY_MS));
+}
+
+/* daysLeft(useByISO, todayISO) -> integer | null. Negative = expired. */
+function kfDaysLeft(useByISO, todayISO) {
+  var u = kfParseISO(useByISO);
+  var t = kfParseISO(todayISO || kfTodayISO());
+  if (!u || !t) return null;
+  return Math.round((u.getTime() - t.getTime()) / KF_DAY_MS);
+}
+
+/* statusOf(daysLeft) -> 'expired' | 'today' | 'soon' | 'fresh' */
+function kfStatusOf(dl) {
+  if (dl === null || dl === undefined || !isFinite(dl)) return 'unknown';
+  if (dl < 0) return 'expired';
+  if (dl === 0) return 'today';
+  if (dl <= 2) return 'soon';
+  return 'fresh';
+}
+
+/* urgencyRank: lower = more urgent. Expired first, then today, then fewest days. */
+function kfUrgencyRank(dl) {
+  if (dl === null || !isFinite(dl)) return 99999;
+  if (dl < 0) return -100000 - dl; /* most negative (longest expired) last among expired? no: most expired first */
+  return dl;
+}
+
+/* buildEatFirstQueue(items, todayISO) -> sorted copy of items with .dl and .status.
+   items: [{id, name, useBy, price, qty, eaten, wasted}] */
+function kfBuildEatFirstQueue(items, todayISO) {
+  var t = todayISO || kfTodayISO();
+  var list = [];
+  for (var i = 0; i < (items || []).length; i++) {
+    var it = items[i];
+    if (!it || it.eaten || it.wasted) continue;
+    var dl = kfDaysLeft(it.useBy, t);
+    list.push({
+      id: it.id, name: it.name, useBy: it.useBy, storage: it.storage,
+      opened: !!it.opened, price: it.price, qty: it.qty,
+      dl: dl, status: kfStatusOf(dl)
+    });
+  }
+  list.sort(function (a, b) {
+    var ra = kfUrgencyRank(a.dl), rb = kfUrgencyRank(b.dl);
+    if (ra !== rb) return ra - rb;
+    return String(a.name).localeCompare(String(b.name));
+  });
+  return list;
+}
+
+/* countByStatus(queue) -> {expired, today, soon, fresh} */
+function kfCountByStatus(queue) {
+  var c = { expired: 0, today: 0, soon: 0, fresh: 0, unknown: 0 };
+  for (var i = 0; i < (queue || []).length; i++) {
+    var s = queue[i].status;
+    if (c[s] === undefined) c.unknown++;
+    else c[s]++;
+  }
+  return c;
+}
+
+/* checkFridgeTemp(value, unit, zone) -> {ok, verdict, ideal}
+   zone: 'fridge' | 'freezer'. Fridge must be <= 40F / 4C. Freezer <= 0F / -18C. */
+function kfCheckTemp(value, unit, zone) {
+  var v = parseFloat(String(value == null ? '' : value).trim());
+  if (!isFinite(v)) return { ok: false, verdict: 'Enter a valid temperature.', ideal: '' };
+  var u = String(unit || 'F').toUpperCase();
+  var f = (u === 'C') ? (v * 9 / 5 + 32) : v; /* normalize to Fahrenheit */
+  var z = String(zone || 'fridge').toLowerCase();
+  if (z === 'freezer') {
+    if (f <= 0) return { ok: true, verdict: 'Perfect — at or below 0°F (-18°C).', ideal: '0°F (-18°C) or colder' };
+    if (f <= 10) return { ok: false, verdict: 'Too warm! Freezer food loses safety above 0°F. Lower it today.', ideal: '0°F (-18°C) or colder' };
+    return { ok: false, verdict: 'Danger zone for a freezer — spoilage and freezer burn accelerate fast.', ideal: '0°F (-18°C) or colder' };
+  }
+  if (f <= 40) {
+    if (f >= 32) return { ok: true, verdict: 'Great — 32–40°F (0–4°C) is the safe fridge range.', ideal: 'At or below 40°F (4°C)' };
+    return { ok: true, verdict: 'Safe, but below freezing — produce may ice up. Nudge it up a touch.', ideal: 'At or below 40°F (4°C)' };
+  }
+  if (f <= 45) return { ok: false, verdict: 'Borderline — bacteria double fast above 40°F. Cool it down now.', ideal: 'At or below 40°F (4°C)' };
+  return { ok: false, verdict: 'Danger zone! Perishables spoil quickly above 40°F (4°C).', ideal: 'At or below 40°F (4°C)' };
+}
+
+/* moneySaved(items) -> {saved, wasted, active}
+   saved: value of items eaten (not wasted) before expiry.
+   wasted: value of items marked wasted or expired & untouched. */
+function kfMoneySaved(items, todayISO) {
+  var t = todayISO || kfTodayISO();
+  var saved = 0, wasted = 0, active = 0;
+  for (var i = 0; i < (items || []).length; i++) {
+    var it = items[i];
+    if (!it) continue;
+    var val = (parseFloat(it.price) || 0) * (parseFloat(it.qty) || 1);
+    if (val <= 0) continue;
+    if (it.eaten && !it.wasted) { saved += val; continue; }
+    if (it.wasted) { wasted += val; continue; }
+    var dl = kfDaysLeft(it.useBy, t);
+    if (dl !== null && dl < 0) wasted += val;
+    else active += val;
+  }
+  function r2(n) { return Math.round(n * 100) / 100; }
+  return { saved: r2(saved), wasted: r2(wasted), active: r2(active) };
+}
+
+/* formatDateLong(iso) -> "Oct 4, 2026" | iso passthrough on bad input */
+function kfFormatLong(iso) {
+  var dt = kfParseISO(iso);
+  if (!dt) return String(iso == null ? '' : iso);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[dt.getMonth()] + ' ' + dt.getDate() + ', ' + dt.getFullYear();
+}
+
+/* categoryList() -> sorted unique categories in the DB */
+function kfCategoryList() {
+  var seen = {}, out = [];
+  for (var i = 0; i < KF_FOODS.length; i++) {
+    var c = KF_FOODS[i].c;
+    if (!seen[c]) { seen[c] = 1; out.push(c); }
+  }
+  out.sort();
+  return out;
+}
+
+
+</script>
+
+<!-- ============ APP (wires UI; not part of lib) ============ -->
+<script>
+(function () {
+  var LS_KEY = 'keepfresh-v1';
+  var state = { items: [], selectedId: null };
+  try { state.items = JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch (e) { state.items = []; }
+
+  function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state.items)); } catch (e) {} }
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]); }); }
+
+  var STATUS_LABEL = { expired: 'Expired', today: 'Eat today', soon: 'Use soon', fresh: 'Fresh', unknown: '—' };
+
+  function renderSearch(q) {
+    var list = kfSearchFoods(q).slice(0, 60);
+    var box = el('kf-food-list');
+    if (!list.length) { box.innerHTML = '<div class="p-3 text-sm text-stone-400">No matches — try another word.</div>'; return; }
+    box.innerHTML = list.map(function (r) {
+      return '<button type="button" data-fid="' + r.id + '" class="kf-food-row w-full text-left px-3 py-2 flex justify-between gap-2 items-center">' +
+        '<span class="text-sm font-semibold text-stone-700">' + esc(r.n) + '</span>' +
+        '<span class="text-xs text-stone-400 shrink-0">' + esc(r.c) + '</span></button>';
+    }).join('');
+  }
+
+  function renderSelected() {
+    var f = kfGetFood(state.selectedId);
+    el('kf-selected-food').textContent = f ? '✓ Selected: ' + f.n : '';
+  }
+
+  function renderItems() {
+    var box = el('kf-items');
+    var today = kfTodayISO();
+    if (!state.items.length) {
+      box.innerHTML = '<div class="text-sm text-stone-400 py-6 text-center">Nothing tracked yet — add your first item above. 🥕</div>';
+      return;
+    }
+    box.innerHTML = state.items.map(function (it, idx) {
+      var dl = kfDaysLeft(it.useBy, today);
+      var st = kfStatusOf(dl);
+      var dlTxt = dl === null ? '?' : (dl < 0 ? Math.abs(dl) + 'd overdue' : dl === 0 ? 'today!' : dl + 'd left');
+      var done = it.eaten || it.wasted;
+      return '<div class="flex items-center gap-2 rounded-xl border border-[#e9e4d6] px-3 py-2 ' + (done ? 'opacity-50 bg-stone-50' : 'bg-white') + '">' +
+        '<div class="flex-1 min-w-0"><div class="text-sm font-bold text-stone-700 truncate">' + esc(it.name) + (it.qty > 1 ? ' ×' + it.qty : '') + '</div>' +
+        '<div class="text-xs text-stone-400">use by ' + esc(kfFormatLong(it.useBy)) + ' · ' + esc(it.storage) + (it.opened ? ' · opened' : '') + '</div></div>' +
+        (done ? '<span class="kf-pill ' + (it.eaten ? 'pill-fresh' : 'pill-expired') + '">' + (it.eaten ? 'ate it' : 'wasted') + '</span>'
+         : '<span class="kf-pill pill-' + st + '">' + esc(dlTxt) + '</span>' +
+           '<button data-act="eat" data-idx="' + idx + '" class="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-[#16a34a] text-white hover:bg-[#15803d]">Ate it</button>' +
+           '<button data-act="waste" data-idx="' + idx + '" class="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-stone-200 text-stone-600 hover:bg-red-200 hover:text-red-700">Wasted</button>') +
+        '</div>';
+    }).join('');
+  }
+
+  function renderQueue() {
+    var q = kfBuildEatFirstQueue(state.items, kfTodayISO());
+    var box = el('kf-queue');
+    if (!q.length) { box.innerHTML = '<div class="text-sm text-stone-400 py-4 text-center">All clear! Nothing needs eating urgently. 🎉</div>'; return; }
+    box.innerHTML = q.slice(0, 12).map(function (it, i) {
+      var dlTxt = it.dl < 0 ? 'expired ' + Math.abs(it.dl) + 'd ago' : it.dl === 0 ? 'eat TODAY' : it.dl + ' day' + (it.dl === 1 ? '' : 's') + ' left';
+      var num = ['🥇','🥈','🥉'][i] || ('#' + (i + 1));
+      return '<div class="rounded-xl border border-[#fed7aa] bg-[#fff7ed] px-3 py-2 flex items-center gap-2">' +
+        '<span class="text-lg">' + num + '</span>' +
+        '<div class="flex-1 min-w-0"><div class="text-sm font-bold text-stone-700 truncate">' + esc(it.name) + '</div>' +
+        '<div class="text-xs text-stone-500">use by ' + esc(kfFormatLong(it.useBy)) + '</div></div>' +
+        '<span class="kf-pill pill-' + it.status + '">' + esc(dlTxt) + '</span></div>';
+    }).join('');
+  }
+
+  function renderMoney() {
+    var m = kfMoneySaved(state.items, kfTodayISO());
+    el('kf-saved-total').textContent = m.saved;
+    el('kf-wasted-total').textContent = m.wasted;
+    el('kf-active-total').textContent = m.active;
+  }
+
+  function renderAll() { renderSelected(); renderItems(); renderQueue(); renderMoney(); }
+
+  el('kf-food-search').addEventListener('input', function (e) { renderSearch(e.target.value); });
+  el('kf-food-list').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-fid]');
+    if (!b) return;
+    state.selectedId = parseInt(b.getAttribute('data-fid'), 10);
+    renderSelected();
+  });
+
+  el('kf-add-btn').addEventListener('click', function () {
+    var msg = el('kf-add-msg');
+    var f = kfGetFood(state.selectedId);
+    var bought = el('kf-bought-on').value;
+    var storage = el('kf-storage').value;
+    var opened = el('kf-opened').checked;
+    if (!f) { msg.textContent = '⚠️ Please pick a food from the search results first.'; msg.style.color = '#c2410c'; return; }
+    if (!bought) { msg.textContent = '⚠️ Please set the bought-on date.'; msg.style.color = '#c2410c'; return; }
+    var useBy = kfCalcUseBy(bought, state.selectedId, storage, opened);
+    if (!useBy) { msg.textContent = '⚠️ This food can’t be stored that way (or the date is in the future). Pick another storage.'; msg.style.color = '#c2410c'; return; }
+    var qty = Math.max(1, parseInt(el('kf-qty').value, 10) || 1);
+    var price = parseFloat(el('kf-price').value) || 0;
+    state.items.push({ id: state.selectedId, name: f.n, useBy: useBy, storage: storage, opened: opened, qty: qty, price: price, eaten: false, wasted: false, addedAt: kfTodayISO() });
+    save(); renderAll();
+    msg.textContent = '✅ Added! Use by ' + kfFormatLong(useBy) + '.';
+    msg.style.color = '#15803d';
+  });
+
+  el('kf-items').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    var idx = parseInt(b.getAttribute('data-idx'), 10);
+    var it = state.items[idx];
+    if (!it) return;
+    if (b.getAttribute('data-act') === 'eat') it.eaten = true; else it.wasted = true;
+    save(); renderAll();
+  });
+
+  el('kf-clear-btn').addEventListener('click', function () {
+    if (!state.items.length) return;
+    if (confirm('Remove all tracked items?')) { state.items = []; save(); renderAll(); }
+  });
+
+  el('kf-temp-check').addEventListener('click', function () {
+    var r = kfCheckTemp(el('kf-temp-value').value, el('kf-temp-unit').value, el('kf-temp-zone').value);
+    var box = el('kf-temp-result');
+    box.innerHTML = '<span class="inline-block rounded-xl px-3 py-2 ' + (r.ok ? 'bg-[#ecfdf5] text-[#15803d] border border-[#bbf7d0]' : 'bg-[#fef2f2] text-red-700 border border-[#fecaca]') + '">' +
+      (r.ok ? '✅ ' : '⚠️ ') + esc(r.verdict) + ' <span class="font-normal opacity-80">(ideal: ' + esc(r.ideal) + ')</span></span>';
+  });
+
+  /* init */
+  el('kf-bought-on').value = kfTodayISO();
+  renderSearch('');
+  renderAll();
+})();
+</script>
+
+
+<!-- ============ SEO ARTICLE ============ -->
+<article class="kf-article max-w-4xl mx-auto px-4 sm:px-6 pb-4">
+  <h2>How Long Does Food Last in the Fridge? The Complete Shelf-Life Guide</h2>
+  <p>If you have ever stood in front of an open fridge, sniffed a carton of milk and thought <em>"is this still good?"</em>, you are not alone. Roughly one-third of all food produced for people never gets eaten, and a huge share of that waste starts at home — in the fridge. The good news: most food waste is preventable with one simple habit: knowing <strong>how long does food last in fridge</strong> conditions, and acting on that knowledge before the clock runs out.</p>
+  <p>This guide is your complete <strong>food shelf life chart</strong> walkthrough. It explains why different foods expire at different speeds, how storage choices (fridge vs. freezer vs. pantry, opened vs. unopened) change the math, what your <strong>fridge food expiration guide</strong> should account for, and how a simple tracking habit can save a family hundreds of dollars a year. KeepFresh, the free tool at the top of this page, turns all of this into a practical daily habit: add what you bought, and it computes the exact use-by date for you.</p>
+
+  <h2>Why a Food Shelf Life Chart Matters More Than the Date on the Package</h2>
+  <p>Those printed dates — "best by", "sell by", "use by" — are the manufacturer's best guess about quality, not a lab-tested safety deadline. In the United States, for example, only infant formula is federally required to carry a true expiration date. Everything else is voluntary, inconsistent, and often conservative. That means two identical cartons of yogurt can behave very differently depending on how they were stored after you brought them home.</p>
+  <p>A reliable <strong>food shelf life chart</strong> starts from storage reality, not the label. Public guidance from agencies like the USDA's FoodKeeper program estimates shelf life by food type and storage zone: fridge, freezer, or pantry. KeepFresh's built-in database of 170+ foods is compiled from that public guidance and marked as estimates at build time — because temperature, packaging, and handling vary, but the patterns are remarkably consistent.</p>
+
+  <h3>The three factors that control shelf life</h3>
+  <ul>
+    <li><strong>Temperature.</strong> Bacteria multiply fastest between 40°F and 140°F (4°C–60°C) — the "danger zone". A fridge at or below 40°F (4°C) slows them dramatically; a freezer at 0°F (-18°C) stops them almost entirely.</li>
+    <li><strong>Moisture and air.</strong> Fresh produce breathes and wilts; exposed meat oxidizes. Airtight wrapping can add days of life.</li>
+    <li><strong>Acidity and salt.</strong> Fermented, pickled and cured foods (yogurt, pickles, salami) last far longer than fresh milk or raw chicken — acidity and salt are hostile to spoilage microbes.</li>
+  </ul>
+
+  <h2>Fridge Food Expiration Guide: What Lasts, What Doesn't</h2>
+  <p>Here is the core of any <strong>fridge food expiration guide</strong>: perishables fall into a few clear tiers. Raw ground meat, fresh fish, and delicate seafood have the shortest fridge lives — about 1–2 days. Raw chicken pieces, pork, and sausages last roughly 1–2 days too, while whole cuts of beef, pork roasts and steaks buy you 3–5 days. Cooked leftovers — casseroles, soups, cooked meat, leftover pizza — hold for 3–4 days. Opened deli meats and hot dogs are good for 3–7 days depending on the product.</p>
+  <p>Dairy is more forgiving. Unopened milk lasts about a week past its sell-by date in a cold fridge; hard cheeses like cheddar and parmesan keep for months; soft cheeses and yogurt last 1–2 weeks. Eggs, kept in their carton in the main body of the fridge (not the door), stay good for 3–5 weeks — one of the most misunderstood items in the kitchen.</p>
+  <p>Fresh produce varies wildly: berries and leafy greens fade in 2–5 days, while carrots, cabbage and apples keep for weeks. The tracker above handles all of this automatically — search any of the 170 foods and it applies the right estimate for your chosen storage.</p>
+
+  <h3>A quick-reference shelf life chart (fridge estimates)</h3>
+  <table>
+    <tr><th>Food</th><th>Fridge (days)</th><th>Freezer (months)</th></tr>
+    <tr><td>Raw ground beef / pork</td><td>1–2</td><td>3–4</td></tr>
+    <tr><td>Raw chicken pieces</td><td>1–2</td><td>9</td></tr>
+    <tr><td>Beef steak / roast (raw)</td><td>3–5</td><td>6–12</td></tr>
+    <tr><td>Cooked leftovers</td><td>3–4</td><td>2–6</td></tr>
+    <tr><td>Milk (opened)</td><td>~7</td><td>3</td></tr>
+    <tr><td>Hard cheese (cheddar)</td><td>~180</td><td>6</td></tr>
+    <tr><td>Eggs (raw, in shell)</td><td>21–35</td><td>—</td></tr>
+    <tr><td>Berries</td><td>2–5</td><td>6–12</td></tr>
+    <tr><td>Leafy greens</td><td>3–7</td><td>8–12 (blanched)</td></tr>
+    <tr><td>Carrots / cabbage</td><td>14–28</td><td>8–12</td></tr>
+  </table>
+  <p>These are estimates — your fridge's actual temperature and how often the door opens shift the real numbers. That's exactly why the temp checker in the tool exists: if your fridge runs at 45°F, every number in the chart above shrinks.</p>
+
+  <h2>Opened vs. Unopened: The Detail Most Guides Skip</h2>
+  <p>One of the most common questions behind <strong>"how long does food last in fridge"</strong> searches is really about opened packages. An unopened carton of chicken broth can sit in the pantry for a year; open it and you get 3–4 days in the fridge. Unopened yogurt keeps a week or more past its date; opened, you have days. Ketchup, mustard and pickles survive months once opened because acidity protects them — but mayonnaise, salsa and opened pasta sauce do not get that luxury.</p>
+  <p>KeepFresh handles this with an <strong>opened-vs-unopened shelf-life toggle</strong>. When you add an item, tick "Already opened" and the tool automatically swaps to the shorter opened estimate — no mental math required.</p>
+
+  <h2>Fridge and Freezer Temperature: The Invisible Variable</h2>
+  <p>Every shelf-life estimate assumes your fridge is actually cold. Food-safety guidance is unanimous: the fridge must stay at or below 40°F (4°C), and the freezer at 0°F (-18°C). Above 40°F, bacteria double as fast as every 20 minutes. A fridge running at 45°F can cut the safe life of milk and meat nearly in half — silently.</p>
+  <p>Use the temp checker in the tool: type your fridge or freezer reading in °F or °C and it tells you instantly whether you're in the safe zone, borderline, or the danger zone — with the ideal target shown. If you don't own a fridge thermometer, a $5 appliance thermometer is one of the cheapest food-safety upgrades a kitchen can have.</p>
+
+  <h2>The Eat-First Queue: Stop Losing Food to the Back of the Fridge</h2>
+  <p>Most spoilage isn't a science problem — it's an attention problem. Food dies in the back of the fridge because nobody saw it. The <strong>Eat-First urgency queue</strong> solves this by sorting everything you're tracking by urgency: expired items first, then "eat today", then "use soon", then fresh items. It answers the nightly question — <em>what should I cook tonight?</em> — with data instead of guesswork. Households that plan meals around what's expiring first routinely report cutting their food waste by a third or more.</p>
+
+  <h2>How Tracking Expiry Dates Saves Real Money</h2>
+  <p>The average household throws away hundreds of dollars of food a year — wilted greens, forgotten leftovers, milk that turned. When you enter a price with each item, KeepFresh's <strong>money-saved tracker</strong> totals the value of everything you actually ate versus what spoiled. Watch the "Saved" number climb and the "Wasted" number stay near zero, and the habit reinforces itself. It's a gentle nudge, not a lecture: seeing that you saved $40 this month by eating leftovers first is more motivating than any guilt trip.</p>
+
+  <h2>Freezer Strategy: Your Second Fridge</h2>
+  <p>The freezer is the great pause button. Most meats keep 3–12 months frozen; bread 3 months; blanched vegetables 8–12 months; berries up to a year. The enemy is freezer burn (dehydration), not bacteria — food kept at 0°F stays safe indefinitely, though quality fades. Wrap tightly, remove air, label with the freeze date, and rotate: first in, first out. When you add an item to KeepFresh, choose "Freezer" as the storage and it computes the freezer use-by date instead.</p>
+
+  <h2>Common Mistakes That Shorten Shelf Life</h2>
+  <ul>
+    <li><strong>Storing milk and eggs in the door.</strong> The door is the warmest spot. Keep dairy on middle shelves.</li>
+    <li><strong>Washing berries before storing.</strong> Moisture invites mold — wash right before eating.</li>
+    <li><strong>Putting hot leftovers straight in the fridge.</strong> Cool within 2 hours; divide large pots into shallow containers so they chill fast.</li>
+    <li><strong>Trusting the sniff test alone.</strong> Spoilage bacteria usually announce themselves, but pathogens often don't. Dates + senses + proper temperature is the safe trio.</li>
+    <li><strong>Forgetting the freezer exists.</strong> Bread, butter, shredded cheese, bananas for smoothies — all freeze beautifully.</li>
+  </ul>
+
+  <h2>How to Use KeepFresh Daily</h2>
+  <p>It takes under a minute after each grocery run: search each item, set the bought-on date (today is pre-filled), pick fridge/freezer/pantry, tick "opened" if relevant, optionally add the price, and hit Add. Each evening, glance at the Eat-First queue and build dinner around the top items. When you finish something, tap "Ate it"; if something went bad, tap "Wasted" so your money tracker stays honest. Once a month, check your fridge temperature with the built-in checker. That's the whole system — small habit, measurable savings, less waste.</p>
+  <p>Food lasts exactly as long as your storage lets it. With a real <strong>food shelf life chart</strong> in your pocket, the right temperatures, and an Eat-First queue doing the remembering for you, the question <strong>"how long does food last in fridge"</strong> stops being a guess — and your groceries stop becoming garbage.</p>
+</article>
+
+<!-- ============ FAQs ============ -->
+<section class="max-w-4xl mx-auto px-4 sm:px-6 pb-10">
+  <h2 class="text-2xl font-extrabold text-[#14532d] mb-4">Frequently asked questions</h2>
+
+  <details class="faq">
+    <summary>How long does food last in the fridge?</summary>
+    <p class="mt-2 text-stone-600 leading-relaxed">It depends on the food. Raw ground meat and fresh fish last 1–2 days; raw chicken pieces 1–2 days; beef steaks and roasts 3–5 days; cooked leftovers 3–4 days; opened milk about a week; hard cheeses months; eggs 3–5 weeks. These assume your fridge is at or below 40°F (4°C) — warmer fridges shorten every number. KeepFresh computes the exact use-by date for 170+ foods from your bought-on date.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Does opening a package shorten how long food lasts?</summary>
+    <p class="mt-2 text-stone-600 leading-relaxed">Almost always, yes. Opening exposes food to air, moisture and bacteria. Unopened broth lasts a year in the pantry but 3–4 days in the fridge once opened; unopened yogurt keeps well past its date while opened yogurt lasts days. Use KeepFresh's "Already opened" toggle and it automatically applies the shorter opened shelf life.</p>
+  </details>
+
+  <details class="faq">
+    <summary>What temperature should my fridge and freezer be?</summary>
+    <p class="mt-2 text-stone-600 leading-relaxed">Your fridge should be at or below 40°F (4°C), ideally 32–40°F (0–4°C). Your freezer should be at 0°F (-18°C) or colder. Above 40°F, bacteria can double every 20 minutes, which is why the temp checker in this tool flags anything warmer. An inexpensive appliance thermometer is the easiest way to verify.</p>
+  </details>
+
+  <details class="faq">
+    <summary>Can I eat food after its use-by date?</summary>
+    <p class="mt-2 text-stone-600 leading-relaxed">"Best by" and "sell by" dates are quality estimates, not safety deadlines — most foods are fine past them if stored correctly and they look, smell and taste normal. True "use by" dates on highly perishable items (like infant formula or some deli meats) should be respected. When in doubt, throw it out — and note that pathogens don't always smell, so proper temperature matters more than sniffing.</p>
+  </details>
+
+  <details class="faq">
+    <summary>How long does food last in the freezer?</summary>
+    <p class="mt-2 text-stone-600 leading-relaxed">At 0°F (-18°C), food stays safe indefinitely — quality is what fades. Practical freezer lives: ground meat 3–4 months, steaks and chicken 6–12 months, bread 3 months, blanched vegetables 8–12 months, berries up to a year. Wrap tightly to prevent freezer burn, label the freeze date, and rotate first-in-first-out.</p>
+  </details>
+
+  <details class="faq">
+    <summary>How can tracking expiry dates save me money?</summary>
+    <p class="mt-2 text-stone-600 leading-relaxed">Households waste hundreds of dollars of food yearly — mostly from forgetting what's in the fridge. Logging bought-on dates, eating from an urgency queue (oldest first), and marking items "Ate it" vs "Wasted" makes the savings visible. KeepFresh's money-saved tracker totals the value of food you rescued from spoilage so the habit sticks.</p>
+  </details>
+</section>
+
+<!-- ============ JSON-LD ============ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How long does food last in the fridge?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It depends on the food. Raw ground meat and fresh fish last 1-2 days; raw chicken pieces 1-2 days; beef steaks and roasts 3-5 days; cooked leftovers 3-4 days; opened milk about a week; hard cheeses months; eggs 3-5 weeks. These assume your fridge is at or below 40°F (4°C)." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does opening a package shorten how long food lasts?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Almost always, yes. Opening exposes food to air, moisture and bacteria. Unopened broth lasts a year in the pantry but 3-4 days in the fridge once opened. Use an opened-vs-unopened toggle to apply the correct shorter shelf life." }
+    },
+    {
+      "@type": "Question",
+      "name": "What temperature should my fridge and freezer be?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Your fridge should be at or below 40°F (4°C), ideally 32-40°F. Your freezer should be at 0°F (-18°C) or colder. Above 40°F, bacteria can double every 20 minutes." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I eat food after its use-by date?",
+      "acceptedAnswer": { "@type": "Answer", "text": "'Best by' and 'sell by' dates are quality estimates, not safety deadlines. True 'use by' dates on highly perishable items should be respected. When in doubt, throw it out." }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does food last in the freezer?",
+      "acceptedAnswer": { "@type": "Answer", "text": "At 0°F (-18°C), food stays safe indefinitely; quality fades over time. Ground meat 3-4 months, steaks and chicken 6-12 months, bread 3 months, blanched vegetables 8-12 months, berries up to a year." }
+    },
+    {
+      "@type": "Question",
+      "name": "How can tracking expiry dates save me money?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Households waste hundreds of dollars of food yearly from forgetting what's in the fridge. Logging bought-on dates and eating oldest-first makes savings visible; a money-saved tracker totals the value rescued from spoilage." }
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
